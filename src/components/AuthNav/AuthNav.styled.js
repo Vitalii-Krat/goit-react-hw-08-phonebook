@@ -9,15 +9,17 @@ export const NavLinkStyled = styled(NavLink)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-left: 50px;
-  width: 55px;
+  margin-left: 20px;
+  width: 60px;
   background-color: yellow;
-  border-radius: 10px;
+  border-radius: 6px;
   color: black;
   padding: 5px;
   cursor: pointer;
-  transform: scale(1.004);
+  transform: scale(1);
   transition: transform 250ms linear;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
+    0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
   :hover,
   :focus {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 1),
@@ -28,7 +30,8 @@ export const NavLinkStyled = styled(NavLink)`
   }
 `;
 
-export const ConteinerLinkStyled = styled.nav`
+export const ContainerLinkStyled = styled.div`
   display: flex;
   align-items: center;
+  flex-direction: row-reverse;
 `;

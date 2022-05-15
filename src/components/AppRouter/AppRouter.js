@@ -1,0 +1,92 @@
+import AppBar from 'components/App/App';
+import Container from 'components/Container/Contaner';
+import { lazy, Suspense, useEffect } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import operations from 'redux/authUser/authUserAsyncThunk';
+import PrivateRoute from 'components/PrivateRoutes/PrivateRoutes';
+import PublicRoute from 'components/PublicRouters/PublicRouters';
+import authSelectors from 'redux/authUser/authUserSelector';
+import { SpinnerDiamond } from 'spinners-react';
+import { Toaster } from 'react-hot-toast';
+import { GlobalStyle } from 'common/GlobalStyle';
+
+const HomeView = lazy(() => import('views/HomeView'));
+const RegistrationView = lazy(() => import('views/RegistrationView'));
+const LoginUserView = lazy(() => import('views/LoginUserView'));
+const ContactsView = lazy(() => import('views/ContactsView'));
+
+export default function AppRouter() {
+  const dispatch = useDispatch();
+  const isFetchCurrentUser = useSelector(authSelectors.getFetchCurrentUser);
+
+  useEffect(() => {
+    dispatch(operations.fetchCurrentUser());
+  }, [dispatch]);
+
+  return (
+    <Container>
+      <GlobalStyle />
+      <Toaster position="top-center" reverseOrder={false} />
+
+      {!isFetchCurrentUser && (
+        <>
+          <AppBar />
+          <Suspense
+            fallback={
+              <SpinnerDiamond
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%,-50%)',
+                }}
+                size={180}
+                thickness={114}
+                speed={120}
+                color="yellow"
+                secondaryColor="blue"
+              />
+            }
+          >
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <PublicRoute>
+                    <HomeView />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="register"
+                element={
+                  <PublicRoute redirectTo="/contacts" restricted>
+                    <RegistrationView />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="login"
+                element={
+                  <PublicRoute redirectTo="/contacts" restricted>
+                    <LoginUserView />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="contacts"
+                element={
+                  <PrivateRoute>
+                    <ContactsView />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </Suspense>
+        </>
+      )}
+    </Container>
+  );
+}
